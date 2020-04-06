@@ -4,8 +4,6 @@ version = "0.1.0"
 authors = ["Julian Libiseller-Egger <37619875+zeawoas@users.noreply.github.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 bitvec = "0.17.4"
 itertools = "0.9.0"
@@ -13,3 +11,7 @@ rayon = "1.3.0"
 indicatif = "0.14.0"
 clap = "~2.27.0"
 num-traits = "0.2.11"
+
+[[bin]]
+name = "binary_hamming_dist"
+path = "src/bin/main.rs"
