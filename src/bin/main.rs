@@ -1,4 +1,4 @@
-use binary_hamming_dist::bitarr::BitarrNa;
+use binary_hamming_dist::bitarr::BitArrNa;
 use binary_hamming_dist::cli::parse_cmd_line;
 use binary_hamming_dist::trimat::TriMat;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -21,7 +21,7 @@ fn main() {
         .expect("Error initializing threadpool");
 
     // parse file into bitarr vec
-    let mut bitarrs: Vec<BitarrNa> = Vec::new();
+    let mut bitarrs: Vec<BitArrNa> = Vec::new();
     let infile = fs::File::open(infname).unwrap_or_else(|err| {
         eprintln!("Error opening input file: {}", err);
         std::process::exit(1);
@@ -30,7 +30,7 @@ fn main() {
 
     for (i, line) in infile.lines().enumerate() {
         if let Ok(line) = line {
-            bitarrs.push(BitarrNa::from_string(&line, na_char).unwrap_or_else(|err| {
+            bitarrs.push(BitArrNa::from_string(&line, na_char).unwrap_or_else(|err| {
                 eprintln!("Error generating bitarr at line {}: {}", i + 1, err);
                 std::process::exit(1);
             }));

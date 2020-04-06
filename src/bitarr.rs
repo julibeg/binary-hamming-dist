@@ -2,23 +2,22 @@ use bitvec::prelude as bv;
 use itertools::izip;
 use std::fmt;
 
-pub struct BitarrNa {
+pub struct BitArrNa {
     pub bits: bv::BitVec<bv::Local, usize>,
     pub not_nas: bv::BitVec<bv::Local, usize>,
 }
 
-impl BitarrNa {
-    // create new `BitarrNa` with all-zero bits and all-one not_nas
-    pub fn new(size: usize) -> BitarrNa {
+impl BitArrNa {
+    // create new `BitArrNa` with all-zero bits and all-one not_nas
+    pub fn new(size: usize) -> BitArrNa {
         let bits = bv::bitvec![0; size];
         let not_nas = bv::bitvec![1; size];
 
-        BitarrNa { bits, not_nas }
+        BitArrNa { bits, not_nas }
     }
 
-    pub fn from_string(string: &str, na_char: char) -> Result<BitarrNa, String> {
-        let mut bitarr = BitarrNa::new(string.len());
-
+    pub fn from_string(string: &str, na_char: char) -> Result<BitArrNa, String> {
+        let mut bitarr = BitArrNa::new(string.len());
         for (i, c) in string.chars().enumerate() {
             if c == '0' {
                 continue;
@@ -39,7 +38,7 @@ impl BitarrNa {
         Ok(bitarr)
     }
 
-    pub fn dist<T>(&self, other: &BitarrNa) -> T
+    pub fn dist<T>(&self, other: &BitArrNa) -> T
     where
         T: num_traits::Num + num_traits::cast::FromPrimitive,
     {
@@ -54,7 +53,7 @@ impl BitarrNa {
             let res_bits = bits ^ other_bits;
             let res_not_nas = not_nas & other_not_nas;
             let incr = T::from_u32((res_bits & res_not_nas).count_ones())
-                .expect("Error converting distance to specified type");
+                .expect("Error converting distance to requested type");
             result = result + incr;
         }
 
@@ -62,7 +61,7 @@ impl BitarrNa {
     }
 }
 
-impl fmt::Display for BitarrNa {
+impl fmt::Display for BitArrNa {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "bits:\t\t{}\nnot_nas:\t{}", self.bits, self.not_nas)
     }
