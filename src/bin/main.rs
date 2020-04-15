@@ -22,8 +22,8 @@ fn main() {
 
     // parse file into bitarr vec
     let mut bitarrs: Vec<BitArrNa> = Vec::new();
-    let infile = fs::File::open(infname).unwrap_or_else(|err| {
-        eprintln!("Error opening input file: {}", err);
+    let infile = fs::File::open(&infname).unwrap_or_else(|err| {
+        eprintln!("Error opening input file {}: {}", infname, err);
         std::process::exit(1);
     });
     let infile = io::BufReader::new(infile);
@@ -40,7 +40,7 @@ fn main() {
         }
     }
 
-    // create Vec of Vecs for holding the distances (resembling a triangular matrix)
+    // initialize triangular distance matrix
     let n = bitarrs.len();
     let mut dists: TriMat<Dist> = TriMat::new(n - 1);
 
