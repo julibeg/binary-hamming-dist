@@ -1,6 +1,6 @@
 # NA agnostic pairwise Hamming distance of binary data
 
-Calculates the matrix of pairwise hamming distances between a list of samples with binary data.
+Calculates the symmetric matrix of pairwise hamming distances between a list of samples with binary data.
 The input file should look like
 ```
 001N0
