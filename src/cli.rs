@@ -1,15 +1,17 @@
-pub fn parse_cmd_line() -> (String, char, Option<String>, usize) {
+pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
     let matches = clap::App::new("Binary Hamming Distance Calculator")
         .about(
             "Calculates the pairwise distance matrix of binary strings and \
-             tolerates missing values. \n\
-             The input file should hold one sample per line and look like: \n\n\
-             001X0 \n\
-             011X0 \t where 'X' denotes a missing value. This yields \n\
-             10X10 \n\n\
-             0,1,1 \n\
-             1,0,2 \t as result.\n\
-             1,2,0 \n",
+             ignores missing values. \n\
+             The input file should hold one sample (i.e. bit string) per line and \
+             look like: \n\n\
+             1001X0X \n\
+             1011X01   where 'X' denotes a missing value. This yields \n\
+             X10X111 \n\n\
+             0,1,2 \n\
+             1,0,3     as result.\n\
+             2,3,0 \n\n\
+             For files with transposed data (one sample per column) use -T.",
         )
         .version(clap::crate_version!())
         .arg(
@@ -55,7 +57,15 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize) {
                 .short("t")
                 .long("threads")
                 .default_value("1")
-                .value_name("NUM"),
+                .value_name("NUM")
+                .display_order(4),
+        )
+        .arg(
+            clap::Arg::with_name("transposed")
+                .help("use when SNPs input file is transposed (SNPs per column, samples per row)")
+                .short("T")
+                .long("transposed")
+                .display_order(5),
         )
         .get_matches();
 
@@ -79,5 +89,6 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize) {
             );
             std::process::exit(1);
         });
-    (infname, na_char, output, threads)
+    let transposed = matches.is_present("transposed");
+    (infname, na_char, output, threads, transposed)
 }

@@ -1,18 +1,20 @@
-use binary_hamming_dist::bitarr::BitArrNa;
-use binary_hamming_dist::cli::parse_cmd_line;
-use binary_hamming_dist::trimat::TriMat;
+use binary_hamming_dist::*;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use std::fs;
 use std::io;
-use std::io::BufRead;
 
 type Dist = u32;
 
 fn main() {
     // get command line arguments
-    let (infname, na_char, output, threads): (String, char, Option<String>, usize) =
-        parse_cmd_line();
+    let (infname, na_char, output, threads, transposed): (
+        String,
+        char,
+        Option<String>,
+        usize,
+        bool,
+    ) = cli::parse_cmd_line();
 
     // create thread pool
     rayon::ThreadPoolBuilder::new()
@@ -21,28 +23,15 @@ fn main() {
         .expect("Error initializing threadpool");
 
     // parse file into bitarr vec
-    let mut bitarrs: Vec<BitArrNa> = Vec::new();
-    let infile = fs::File::open(&infname).unwrap_or_else(|err| {
-        eprintln!("Error opening input file {}: {}", infname, err);
-        std::process::exit(1);
-    });
-    let infile = io::BufReader::new(infile);
-
-    for (i, line) in infile.lines().enumerate() {
-        if let Ok(line) = line {
-            bitarrs.push(BitArrNa::from_string(&line, na_char).unwrap_or_else(|err| {
-                eprintln!("Error generating bitarr at line {}: {}", i + 1, err);
-                std::process::exit(1);
-            }));
-        } else {
-            eprintln!("Error reading input file at line {}", i + 1);
-            std::process::exit(1);
-        }
-    }
+    let bitarrs: Vec<bitarr::BitArrNa> = if transposed {
+        read_file_samples_columns(&infname, na_char)
+    } else {
+        read_file_samples_rows(&infname, na_char)
+    };
 
     // initialize triangular distance matrix
     let n = bitarrs.len();
-    let mut dists: TriMat<Dist> = TriMat::new(n - 1);
+    let mut dists: trimat::TriMat<Dist> = trimat::TriMat::new(n - 1);
 
     // setup progress bar
     let pb = ProgressBar::new(n as u64);

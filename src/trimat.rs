@@ -19,7 +19,7 @@ impl<T> TriMat<T> {
 
 impl<T> TriMat<T>
 where
-    T: num_traits::Zero + std::string::ToString + Copy,
+    T: num::Zero + std::string::ToString + Copy,
 {
     pub fn write_symmetric<Buffer: io::Write>(&self, buffer: &mut Buffer) {
         let n = self.mat.len();
@@ -38,7 +38,7 @@ where
             }
             let line: Vec<String> = line.into_iter().map(|i| i.to_string()).collect();
             writeln!(buffer, "{}", &line.join(","))
-                .expect(&format!("Error writing result at i: {}", i));
+                .unwrap_or_else(|_| panic!("Error writing result at i: {}", i));
         }
     }
 }
