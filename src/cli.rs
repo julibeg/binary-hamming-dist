@@ -62,7 +62,7 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
         )
         .arg(
             clap::Arg::with_name("transposed")
-                .help("use when SNPs input file is transposed (SNPs per column, samples per row)")
+                .help("use when input file is transposed (bit strings in columns)")
                 .short("T")
                 .long("transposed")
                 .display_order(5),
