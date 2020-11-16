@@ -91,8 +91,9 @@ pub fn read_file_samples_columns(infname: &str, na_char: char) -> Vec<BitArrNa> 
                     bitarrs[j].not_nas.set(i, false);
                 } else {
                     eprintln!(
-                        "Char at position {} was \'{}\'; expected \'0\', \'1\' or \'{}\'.",
+                        "Char at position {} in line {} was \'{}\'; expected \'0\', \'1\' or \'{}\'.",
                         j + 1,
+                        i + 1,
                         c,
                         na_char
                     );
