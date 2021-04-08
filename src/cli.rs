@@ -1,4 +1,4 @@
-pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
+pub fn parse_cmd_line() -> (String, Option<String>, usize, bool) {
     let matches = clap::App::new("Binary Hamming Distance Calculator")
         .about(
             "Calculates the pairwise distance matrix of binary strings and \
@@ -6,7 +6,7 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
              The input file should hold one sample (i.e. bit string) per line and \
              look like: \n\n\
              1001X0X \n\
-             1011X01   where 'X' denotes a missing value. This yields \n\
+             1011X01   where anything other than '0' and '1' denotes missing values. This yields \n\
              X10X111 \n\n\
              0,1,2 \n\
              1,0,3     as result.\n\
@@ -23,23 +23,6 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
                 .required(true)
                 .value_name("FILE")
                 .display_order(1),
-        )
-        .arg(
-            clap::Arg::with_name("NA-char")
-                .help("the character [A-Za-z2-9] specifying missing values")
-                .takes_value(true)
-                .default_value("X")
-                .possible_values(&[
-                    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-                    "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f",
-                    "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-                    "w", "x", "y", "z", "2", "3", "4", "5", "6", "7", "8", "9",
-                ])
-                .hide_possible_values(true)
-                .short("n")
-                .long("NA-value")
-                .value_name("CHAR")
-                .display_order(2),
         )
         .arg(
             clap::Arg::with_name("output")
@@ -72,7 +55,6 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
     // calling unwrap is safe here because `input` was `required` by clap
     // and `NA-char` has a default as well as allowed arguments.
     let infname = matches.value_of("input").unwrap().to_string();
-    let na_char = matches.value_of("NA-char").unwrap().chars().next().unwrap();
     let output = match matches.value_of("output") {
         None => None,
         Some(fname) => Some(fname.to_string()),
@@ -90,5 +72,5 @@ pub fn parse_cmd_line() -> (String, char, Option<String>, usize, bool) {
             std::process::exit(1);
         });
     let transposed = matches.is_present("transposed");
-    (infname, na_char, output, threads, transposed)
+    (infname, output, threads, transposed)
 }

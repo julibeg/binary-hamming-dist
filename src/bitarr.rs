@@ -9,6 +9,11 @@ where
     O: bitvec::order::BitOrder,
     T: bitvec::store::BitStore,
 {
+    if bitvec.capacity() == 0 {
+        // the bitvec might have been initialised for a length of zero. in
+        // this case this function is useless and also throws an error --> skip
+        return;
+    }
     let width = T::BITS as usize;
     let numb_elements = bitvec.capacity() / width;
     bitvec.as_mut_slice()[numb_elements - 1] = T::FALSE;
@@ -28,33 +33,24 @@ impl BitArrNa {
     pub fn new(size: usize) -> BitArrNa {
         let bits = bv::bitvec![0; size];
         let mut not_nas = bv::bitvec![1; size];
-
         // the trailing bits of the last storage element in `not_nas` are also '1's which might
         // lead to unexpected results --> set them to zero
         zero_trailing_bits(&mut not_nas);
         BitArrNa { bits, not_nas }
     }
 
-    pub fn from_string(string: &str, na_char: char) -> Result<BitArrNa, String> {
+    pub fn from_string(string: &str) -> BitArrNa {
         let mut bitarr = BitArrNa::new(string.len());
         for (i, c) in string.chars().enumerate() {
-            if c == '0' {
-                continue;
-            } else if c == '1' {
-                bitarr.bits.set(i, true);
-            } else if c == na_char {
-                bitarr.not_nas.set(i, false);
-            } else {
-                return Err(format!(
-                    "Char at position {} was \'{}\'; expected \'0\', \'1\' or \'{}\'.",
-                    i + 1,
-                    c,
-                    na_char
-                ));
-            }
+            // the bits are already set to not-na and 0 --> only need to
+            // do something if a char is '1' or neither '1' or '0'
+            match c {
+                '0' => (),
+                '1' => bitarr.bits.set(i, true),
+                _ => bitarr.not_nas.set(i, false),
+            };
         }
-
-        Ok(bitarr)
+        bitarr
     }
 
     pub fn dist<T>(&self, other: &BitArrNa) -> T

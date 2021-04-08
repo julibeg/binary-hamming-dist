@@ -8,13 +8,7 @@ type Dist = u32;
 
 fn main() {
     // get command line arguments
-    let (infname, na_char, output, threads, transposed): (
-        String,
-        char,
-        Option<String>,
-        usize,
-        bool,
-    ) = cli::parse_cmd_line();
+    let (infname, output, threads, transposed) = cli::parse_cmd_line();
 
     // create thread pool
     rayon::ThreadPoolBuilder::new()
@@ -24,9 +18,9 @@ fn main() {
 
     // parse file into bitarr vec
     let bitarrs: Vec<bitarr::BitArrNa> = if transposed {
-        read_file_samples_columns(&infname, na_char)
+        read_file_samples_columns(&infname)
     } else {
-        read_file_samples_rows(&infname, na_char)
+        read_file_samples_rows(&infname)
     };
 
     // initialize triangular distance matrix
