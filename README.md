@@ -7,7 +7,7 @@ The input file should look like
 N1100
 10N10
 ```
-with any character except for '0' and '1' denoting missing values.
+with any character except for '0' and '1' denoting missing values ('N' in this case).
 This would write
 ```
 0,2,1
